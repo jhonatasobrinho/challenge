@@ -15,6 +15,13 @@ Then go to `http://localhost:8080/rest/mars/{input}`, changing the input to some
  - M to move forward
 
 You can use this input as many times as you want. Try some examples:
- - `http://localhost:8080/rest/mars/MMR` will return (0, 2, E)
- - `http://localhost:8080/rest/mars/MMRMML` will return (2, 2, N)
- - and so on...
+```
+$ curl -s --request POST http://localhost:8080/rest/mars/MMRMMRMM
+(2, 0, S)
+
+$ curl -s --request POST http://localhost:8080/rest/mars/MMR
+(0, 2, E)
+
+$ curl -s --request POST http://localhost:8080/rest/mars/MMRMML
+(2, 2, N)
+```
