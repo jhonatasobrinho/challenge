@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 @Service
 @Scope(value="request", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -29,7 +28,9 @@ public class LocationService {
     }
 
     public void performMovements(String movements) {
-        Arrays.stream(LocationService.convert(movements)).forEach(this::move);
+        Arrays.stream(movements.split(""))
+                .map(DirectionEnum::lookup)
+                .forEach(this::move);
     }
 
     private void move(DirectionEnum direction) {
@@ -44,12 +45,6 @@ public class LocationService {
                 forward.move();
                 break;
         }
-    }
-
-    private static DirectionEnum[] convert(String input) {
-        return Stream.of(input.split(""))
-                .map(DirectionEnum::lookup)
-                .toArray(DirectionEnum[]::new);
     }
 
     private void moveForward() {
