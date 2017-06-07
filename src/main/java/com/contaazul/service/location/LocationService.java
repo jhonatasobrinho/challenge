@@ -13,11 +13,9 @@ import java.util.stream.Stream;
 @Service
 @Scope(value="request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class LocationService {
+
     private int x = 0;
     private int y = 0;
-
-    private int maxX = 5;
-    private int maxY = 5;
 
     private OrientationEnum currentOrientation = OrientationEnum.NORTH;
     private static final OrientationEnum[] ORIENTATIONS = OrientationEnum.values();
@@ -26,7 +24,15 @@ public class LocationService {
     private final Movement right = () -> currentOrientation = ORIENTATIONS[currentOrientation.ordinal() + 1 > ORIENTATIONS.length - 1 ? 0 : currentOrientation.ordinal() + 1];
     private final Movement forward = this::moveForward;
 
-    public void move(DirectionEnum direction) {
+    public String current() {
+        return String.format("(%s, %s, %s)", x, y, currentOrientation);
+    }
+
+    public void performMovements(String movements) {
+        Arrays.stream(LocationService.convert(movements)).forEach(this::move);
+    }
+
+    private void move(DirectionEnum direction) {
         switch (direction) {
             case L:
                 left.move();
@@ -40,18 +46,10 @@ public class LocationService {
         }
     }
 
-    public String current() {
-        return String.format("(%s, %s, %s)", x, y, currentOrientation);
-    }
-
-    public static DirectionEnum[] convert(String input) {
+    private static DirectionEnum[] convert(String input) {
         return Stream.of(input.split(""))
                 .map(DirectionEnum::lookup)
                 .toArray(DirectionEnum[]::new);
-    }
-
-    public void performMovements(String input) {
-        Arrays.stream(LocationService.convert(input)).forEach(this::move);
     }
 
     private void moveForward() {
@@ -72,6 +70,7 @@ public class LocationService {
     }
 
     private void setY(int y) {
+        int maxY = 5;
         if (y < 0 || y > maxY) {
             throw new IllegalArgumentException("Posição inválida");
         }
@@ -79,6 +78,7 @@ public class LocationService {
     }
 
     private void setX(int x) {
+        int maxX = 5;
         if (x < 0 || x > maxX) {
             throw new IllegalArgumentException("Posição inválida");
         }
